@@ -1,4 +1,4 @@
-const connectModel = require('../models/Connect');
+const connectModel = require('../models/connect');
 const transport = require('../email/email.js');
 
 exports.connectCreate = async (req, res, next) => {

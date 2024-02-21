@@ -13,16 +13,24 @@ const mongoClient = new MongoClient(url);
 const uploadFiles = async (req, res) => {
     try {
         await upload(req, res);
-        console.log(req.file);
 
-        if (req.file == undefined) {
+        console.log("incoming files", req.files);
+        if (!req.files.length) {
             return res.send({
                 message: "You must select a file.",
             });
         }
 
+        const fileInfo = req.files.map((file) => {
+            return {
+                name: file.filename,
+                id: file.id,
+                url: baseUrl + file.filename,
+            };
+        });
         return res.send({
             message: "File has been uploaded.",
+            fileInfo,
         });
     } catch (error) {
         console.log(error);
@@ -80,7 +88,9 @@ const download = async (req, res) => {
         });
 
         downloadStream.on("error", function (err) {
-            return res.status(404).send({ message: "Cannot download the Image!" });
+            return res
+                .status(404)
+                .send({ message: "Cannot download the Image!" });
         });
 
         downloadStream.on("end", () => {
